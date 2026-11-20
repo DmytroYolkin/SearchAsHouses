@@ -1,0 +1,38 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*kubeconfig*
+# Azure ML workspace config (holds the subscription ID)
+/config.json
+/searchashouses/config.json
+.azureml/
+# Claude Code personal files
+.claude/settings.local.json
+CLAUDE.local.md
+# report, worklog and screenshots stay local
+searchashouses/report/
+# data: only small samples go into git
+searchashouses/data/*
+!searchashouses/data/samples/
+# models, indexes, runs
+*.pt
+*.bin
+*.safetensors
+*.onnx
+*.faiss
+mlruns/
+outputs/
+# python and tools
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+# hand-in zip and OS files
+*.zip
+.DS_Store
