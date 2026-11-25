@@ -1,0 +1,11 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+# Hello-world job that checks the train-cpu environment (issue #12).
+# Run from searchashouses/:  az ml job create -f azureml/environments/hello_job.yml --stream
+type: command
+display_name: train-cpu hello world
+experiment_name: environment-check
+description: Imports every training package and logs one MLflow metric.
+code: hello
+command: python hello.py
+environment: azureml:train-cpu:1
+compute: azureml:cpu-cluster

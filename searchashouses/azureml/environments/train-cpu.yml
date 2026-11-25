@@ -1,0 +1,10 @@
+$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
+# CPU training environment for the components (issue #12).
+# Azure ML builds a Docker image from the base image + conda file the first time a job uses it,
+# and stores it in the workspace container registry (ACR, about $5/month).
+# Change a package? Bump `version`, then: az ml environment create -f azureml/environments/train-cpu.yml
+name: train-cpu
+version: "1"
+description: torch (CPU), transformers, sentence-transformers, faiss-cpu, mlflow and azureml-mlflow on Python 3.11.
+image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20261122.v1
+conda_file: train-cpu.conda.yml
