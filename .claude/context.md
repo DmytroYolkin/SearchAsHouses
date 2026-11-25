@@ -3,14 +3,13 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95)
-- In progress: #10 datastores (PR #96)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96)
+- In progress: #5 budget alert (PR #97)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
   - #4 [ingest] Confirm the Safety Gate API fields and attribution wording
-  - #5 [setup] Set a budget alert on the Azure subscription
   - #12 [azureml] Define the CPU training environment
   - #31 [ci-cd] Add ci.yml: lint and unit tests on every PR
   - #40 [guardrails] Add input cleaning and PII removal (G1)
@@ -23,6 +22,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | Azure region | Sweden Central. Allowed by Azure for Students: germanywestcentral, swedencentral, uksouth, italynorth, norwayeast (West/North Europe and France Central are blocked) | #9 |
 | Azure resources | rg-searchashouses, mlw-searchashouses (+ storage, key vault, Log Analytics, App Insights; no ACR yet) | #9 |
 | Datastores | `alerts`, `images`, `index`: containers in the workspace storage account; account-key access (key read at run time, kept in the workspace key vault, never on disk) | #10 |
+| Budget alert | budget `searchashouses-90`: EUR 82 (= $90 at the ECB rate of 2026-11-25; billing currency is EUR), yearly from 2026-11-01, e-mail alerts at 50/75/90% of actual cost to the Owner role. Subscription spending limit is On | #5 |
 | GitHub-to-Azure login | open | #1 |
 | Local Kubernetes and runner | open | #2 |
 | LLM for the review note | open | #3 |
@@ -45,7 +45,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 recall@10 translated / hand-written, precision, false flags per 1,000, language gap, hazard macro-F1: none yet
 
 ## Azure credit
-$90 left (checked 2026-11-20)
+$90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can lag up to a day)
 
 ## Open bugs and risks
 - Public repo: secret scanning and push protection are off (Settings > Code security)
@@ -63,3 +63,4 @@ $90 left (checked 2026-11-20)
 | 2026-11-25 | #94 | #9 | Setup scripts (SDK v2) for workspace and cpu-cluster; created rg-searchashouses, mlw-searchashouses and cpu-cluster in Sweden Central |
 | 2026-11-25 | #95 | #11 | check_idle.py (SDK) + unit test; compute.py --instance with 30 min idle shutdown; check_idle run: nothing billable running |
 | 2026-11-25 | #96 | #10 | datastores.py: containers + datastores alerts, images, index (created in Azure) |
+| 2026-11-25 | #97 | #5 | Budget searchashouses-90 (EUR 82 = $90) with alerts at 50/75/90% to the Owner role |
