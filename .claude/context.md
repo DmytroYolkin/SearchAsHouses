@@ -3,15 +3,15 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92)
-- In progress: #8 report skeleton (PR #93, waiting for review)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93)
+- In progress: #9 workspace and CPU cluster scripts (PR #94)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
   - #4 [ingest] Confirm the Safety Gate API fields and attribution wording
   - #5 [setup] Set a budget alert on the Azure subscription
-  - #9 [setup] Script the workspace and a CPU cluster that scales to 0 (SDK v2)
+  - after #94 is merged: #10 (datastores), #11 (auto-shutdown + check_idle.py), #12 (training environment)
   - #31 [ci-cd] Add ci.yml: lint and unit tests on every PR
   - #40 [guardrails] Add input cleaning and PII removal (G1)
 
@@ -19,7 +19,9 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | Topic | Decision | Issue |
 |---|---|---|
 | Hand-in date | open (ask the teacher; no issue) | none |
-| CPU quota and VM size | open | #9 |
+| CPU quota and VM size | Sweden Central; `cpu-cluster` = Standard_D4s_v3 (4 vCPU, 16 GB, $0.204/h), 0-1 nodes, scale-down 120 s. Quota: 20 cores in total, 6 per family | #9 |
+| Azure region | Sweden Central. Allowed by Azure for Students: germanywestcentral, swedencentral, uksouth, italynorth, norwayeast (West/North Europe and France Central are blocked) | #9 |
+| Azure resources | rg-searchashouses, mlw-searchashouses (+ storage, key vault, Log Analytics, App Insights; no ACR yet) | #9 |
 | GitHub-to-Azure login | open | #1 |
 | Local Kubernetes and runner | open | #2 |
 | LLM for the review note | open | #3 |
@@ -47,6 +49,7 @@ $90 left (checked 2026-11-20)
 ## Open bugs and risks
 - Public repo: secret scanning and push protection are off (Settings > Code security)
 - Self-hosted runner on a public repo: fork PRs must never reach it (see #57)
+- Azure CLI 2.77: `az resource list` returns nothing and some error replies fail with "content already consumed"; use `az rest` or the SDK (matters for #11 check_idle.py)
 
 ## Change log
 | Date | PR | Issue | What changed |
@@ -56,3 +59,4 @@ $90 left (checked 2026-11-20)
 | 2026-11-20 | #91 | #6 | Repository skeleton: root files, a README in every layout folder, placeholder test (merged 2026-11-25; #7, #8, #31, #40 now ready) |
 | 2026-11-25 | #92 | #7 | CLAUDE.md, .claude/context.md, .claude/rules/ and GitHub issue/PR templates on main |
 | 2026-11-25 | #93 | #8 | Report skeleton (git-ignored, local only): report/report.md with all sections, worklog/, screenshots/ |
+| 2026-11-25 | #94 | #9 | Setup scripts (SDK v2) for workspace and cpu-cluster; created rg-searchashouses, mlw-searchashouses and cpu-cluster in Sweden Central |

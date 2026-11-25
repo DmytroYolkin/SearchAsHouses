@@ -1,0 +1,5 @@
+# Packages for the setup scripts in this folder (Azure ML SDK v2). Install: pip install -r azureml/setup/requirements.txt
+azure-ai-ml==1.35.2
+azure-identity==1.27.0
+azure-mgmt-resource==26.0.0
+python-dotenv==1.2.4

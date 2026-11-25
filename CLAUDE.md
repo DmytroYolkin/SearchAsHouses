@@ -26,7 +26,7 @@ Should have: translation parallel job + hand-written NL/FR test set; re-ranker +
 
 Could have: CLIP image similarity; monthly Azure ML schedule + weekly drift check; Gradio demo Space; simple review page for officers; short demo video.
 
-Constraints: Azure for Students, $90 credit, small CPU quota, no GPU. Azure ML SDK v2 and CLI v2 YAML only. Compute cluster min nodes 0; no compute instance left running; no AKS; no managed online endpoints; Docker images in GHCR, not ACR. PyTorch + HuggingFace; MLflow for metrics. LLM: small local model or Azure OpenAI (not decided).
+Constraints: Azure for Students, $90 credit, small CPU quota (20 cores in total, 6 per VM family), no GPU. Azure region: Sweden Central (the subscription only allows Germany West Central, Sweden Central, UK South, Italy North and Norway East). Azure ML SDK v2 and CLI v2 YAML only. Compute cluster min nodes 0; no compute instance left running; no AKS; no managed online endpoints; Docker images in GHCR, not ACR. PyTorch + HuggingFace; MLflow for metrics. LLM: small local model or Azure OpenAI (not decided).
 
 Hand-in: quiz answers (module questions, "What did you learn?", three exam questions), source code as .zip, PDF report: project/data/model, Azure ML screenshots, FastAPI integration with BelBazaar, Kubernetes extras, automation, plus Responsible AI and guardrails. Hand-in date: to confirm with the teacher. The quiz, the source zip, the hand-in itself and stopping Azure spending afterwards have no issues: they are done only when I ask.
 
