@@ -1,0 +1,11 @@
+# Conventions
+- Layout: repo-wide files at the root, project code in searchashouses/ (see CLAUDE.md). .github/ stays at the root.
+- One folder per component: component.yml + src/. Azure ML SDK v2 and CLI v2 YAML only.
+- No full datasets in git; only small samples in searchashouses/data/samples/.
+- Every component's core logic has a unit test in searchashouses/tests/.
+- Every registered bundle is tagged with its data asset versions and git commit. Metrics go to MLflow.
+- Secrets live only in .env, GitHub secrets or Kubernetes Secrets, never in git.
+- The repo is public: before every commit, check `git diff --cached --name-only` for .env files, keys, kubeconfig, data or subscription IDs. Workflows use `pull_request`, never `pull_request_target`; the self-hosted runner only runs push, workflow_dispatch and schedule jobs.
+- Prefer the simplest version that works first (must-have), then improve.
+- Check current facts (Azure, HuggingFace, Safety Gate API) instead of guessing.
+- After writing code, explain in brief plain English what it does and why, so I can explain every file in the exam without AI.
