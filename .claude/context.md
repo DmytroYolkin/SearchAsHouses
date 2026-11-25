@@ -3,7 +3,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95)
 - In progress: #10 datastores (PR #96)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
@@ -11,7 +11,6 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
   - #3 [guardrails] Choose the LLM for the review note
   - #4 [ingest] Confirm the Safety Gate API fields and attribution wording
   - #5 [setup] Set a budget alert on the Azure subscription
-  - #11 [setup] Add auto-shutdown and an idle-resource check (PR #95)
   - #12 [azureml] Define the CPU training environment
   - #31 [ci-cd] Add ci.yml: lint and unit tests on every PR
   - #40 [guardrails] Add input cleaning and PII removal (G1)
@@ -51,7 +50,7 @@ $90 left (checked 2026-11-20)
 ## Open bugs and risks
 - Public repo: secret scanning and push protection are off (Settings > Code security)
 - Self-hosted runner on a public repo: fork PRs must never reach it (see #57)
-- Azure CLI 2.77: `az resource list` returns nothing and some error replies fail with "content already consumed"; use `az rest` or the SDK (matters for #11 check_idle.py)
+- Azure CLI 2.77: `az resource list` returns nothing and some error replies fail with "content already consumed"; use `az rest` or the SDK (check_idle.py uses the SDK)
 
 ## Change log
 | Date | PR | Issue | What changed |
@@ -62,4 +61,5 @@ $90 left (checked 2026-11-20)
 | 2026-11-25 | #92 | #7 | CLAUDE.md, .claude/context.md, .claude/rules/ and GitHub issue/PR templates on main |
 | 2026-11-25 | #93 | #8 | Report skeleton (git-ignored, local only): report/report.md with all sections, worklog/, screenshots/ |
 | 2026-11-25 | #94 | #9 | Setup scripts (SDK v2) for workspace and cpu-cluster; created rg-searchashouses, mlw-searchashouses and cpu-cluster in Sweden Central |
+| 2026-11-25 | #95 | #11 | check_idle.py (SDK) + unit test; compute.py --instance with 30 min idle shutdown; check_idle run: nothing billable running |
 | 2026-11-25 | #96 | #10 | datastores.py: containers + datastores alerts, images, index (created in Azure) |
