@@ -3,8 +3,8 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92)
-- In progress: #9 workspace and CPU cluster scripts (PR #94, waiting for review); #8 report skeleton (PR #93)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93)
+- In progress: #9 workspace and CPU cluster scripts (PR #94)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
@@ -58,4 +58,5 @@ $90 left (checked 2026-11-20)
 | 2026-11-20 | none | none | Empty "Initial commit" pushed to main, so the first issue can use a PR |
 | 2026-11-20 | #91 | #6 | Repository skeleton: root files, a README in every layout folder, placeholder test (merged 2026-11-25; #7, #8, #31, #40 now ready) |
 | 2026-11-25 | #92 | #7 | CLAUDE.md, .claude/context.md, .claude/rules/ and GitHub issue/PR templates on main |
+| 2026-11-25 | #93 | #8 | Report skeleton (git-ignored, local only): report/report.md with all sections, worklog/, screenshots/ |
 | 2026-11-25 | #94 | #9 | Setup scripts (SDK v2) for workspace and cpu-cluster; created rg-searchashouses, mlw-searchashouses and cpu-cluster in Sweden Central |
