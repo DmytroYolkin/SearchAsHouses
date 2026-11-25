@@ -3,15 +3,14 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91)
-- In progress: #7 CLAUDE.md, .claude/ and GitHub templates (PR #92, waiting for review)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92)
+- In progress: #8 report skeleton (PR #93, waiting for review)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
   - #4 [ingest] Confirm the Safety Gate API fields and attribution wording
   - #5 [setup] Set a budget alert on the Azure subscription
-  - #8 [report] Set up the report skeleton and worklog folders (PR after #92 is merged: it only changes this file)
   - #9 [setup] Script the workspace and a CPU cluster that scales to 0 (SDK v2)
   - #31 [ci-cd] Add ci.yml: lint and unit tests on every PR
   - #40 [guardrails] Add input cleaning and PII removal (G1)
@@ -56,3 +55,4 @@ $90 left (checked 2026-11-20)
 | 2026-11-20 | none | none | Empty "Initial commit" pushed to main, so the first issue can use a PR |
 | 2026-11-20 | #91 | #6 | Repository skeleton: root files, a README in every layout folder, placeholder test (merged 2026-11-25; #7, #8, #31, #40 now ready) |
 | 2026-11-25 | #92 | #7 | CLAUDE.md, .claude/context.md, .claude/rules/ and GitHub issue/PR templates on main |
+| 2026-11-25 | #93 | #8 | Report skeleton (git-ignored, local only): report/report.md with all sections, worklog/, screenshots/ |
