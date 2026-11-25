@@ -1,0 +1,17 @@
+# Packages of the train-cpu environment. Exact versions, so every build is the same.
+# torch comes from the PyTorch CPU index ("+cpu" build): about 10x smaller than the CUDA build
+# and enough, because the cluster has no GPU.
+name: train-cpu
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cpu
+      - torch==2.15.0+cpu
+      - transformers==5.24.1
+      - sentence-transformers==6.3.0
+      - faiss-cpu==1.16.0
+      - mlflow==3.18.0
+      - azureml-mlflow==1.62.0.post7
