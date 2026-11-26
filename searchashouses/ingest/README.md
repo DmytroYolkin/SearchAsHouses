@@ -14,3 +14,11 @@ Run: `python ingest/safetygate.py --since 2024-01-01`
    - `alerts.jsonl`: one flat record per alert (alert_id, publication_date, category, product, brand, name, model, batch, barcode, risk_types, danger, measures, description, notifying_country, country_of_origin, user_type, risk_level, pictures, report, ...)
 
 A second run on the same day reuses the reports already downloaded. Test: `pytest tests/ingest/test_safetygate.py`.
+
+## register.py
+Uploads one pull folder to the `alerts` datastore (`safetygate/<pull date>/`) and registers it as the next version of the data asset `safetygate_alerts` (type `uri_folder`), tagged with pull date, alert count, weekly reports, first/last alert date, source and licence. A pull that is already registered is skipped.
+
+Needs `az login`, the filled `.env` and `pip install -r azureml/setup/requirements.txt`.
+
+Run: `python ingest/register.py` (newest pull) or `python ingest/register.py --pull-date 2026-11-26`
+Check: `az ml data show -n safetygate_alerts --version 1`. Test: `pytest tests/ingest/test_register.py`.
