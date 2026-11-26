@@ -3,13 +3,14 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98)
-- In progress: #4 Safety Gate source and attribution (PR #100); #31 ci.yml (PR #99)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100)
+- In progress: #13 safetygate.py (PR #101)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
   - #15 [ingest] Write ingest/abo.py and register ABO listings and a photo subset (1/2)
+  - #33 [ci-cd] Fail CI when a component has no unit test
   - #40 [guardrails] Add input cleaning and PII removal (G1)
 
 ## Decisions
@@ -69,3 +70,4 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-25 | #98 | #12 | Environment train-cpu:1 (Azure-built, workspace ACR) + hello-world job: Completed, all 6 packages import, MLflow metric logged |
 | 2026-11-25 | #99 | #31 | ci.yml (ruff + pytest on every PR and push to main); branch protection on main requires both checks |
 | 2026-11-26 | #100 | #4 | Safety Gate source (official weekly report XML, CC0), fields, attribution text in both READMEs; XML samples in data/samples/ |
+| 2026-11-26 | #101 | #13 | ingest/safetygate.py + 4 unit tests; pull --since 2024-01-01: 149 weekly reports, 12,135 alerts (local data/raw/safetygate/2026-11-26/) |
