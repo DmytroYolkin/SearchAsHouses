@@ -18,3 +18,8 @@ All project code. Commands run from this folder unless a README says otherwise.
 | `report/` | git-ignored: report draft, worklog, screenshots |
 
 > Stub: every folder gets its run command here as the project grows.
+
+## Data credits
+**Safety Gate:** Contains product safety alert data from Safety Gate, the EU rapid alert system for dangerous non-food products (European Commission, https://ec.europa.eu/safety-gate-alerts/), © European Union, 1995-2026. The weekly report data is published under CC0 1.0 (data.europa.eu dataset rapex-rapid-alert-system-non-food); this project parsed, cleaned and translated it. Product photos and brand names belong to their rightholders. SearchAsHouses is not affiliated with or endorsed by the European Commission.
+
+Samples in `data/samples/`: `safetygate_sample.xml` (the first 5 of 104 alerts of Safety Gate weekly report 2026-46, otherwise unchanged) and `safetygate_weekly_list_sample.xml` (the first 3 entries of the weekly report list).

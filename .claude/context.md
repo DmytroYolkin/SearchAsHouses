@@ -3,15 +3,13 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97)
-- In progress: #12 training environment (PR #98)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98)
+- In progress: #4 Safety Gate source and attribution (PR #100); #31 ci.yml (PR #99)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
-  - #4 [ingest] Confirm the Safety Gate API fields and attribution wording
   - #15 [ingest] Write ingest/abo.py and register ABO listings and a photo subset (1/2)
-  - #31 [ci-cd] Add ci.yml: lint and unit tests on every PR
   - #40 [guardrails] Add input cleaning and PII removal (G1)
 
 ## Decisions
@@ -27,7 +25,8 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | GitHub-to-Azure login | open | #1 |
 | Local Kubernetes and runner | open | #2 |
 | LLM for the review note | open | #3 |
-| Safety Gate API and attribution | open | #4 |
+| Safety Gate source | Official "Weekly Reports - XML" export (data.europa.eu dataset rapex-rapid-alert-system-non-food, CC0 1.0). List of all weekly reports since 2005: `https://ec.europa.eu/safety-gate-alerts/api/download/weeklyReport/list/xml/en`; each entry has a `URL` to one report's XML (`.../weeklyReport/detail/xml/<id>?language=en...`), about 80-110 alerts per week. No paging: one file per week. Alert fields used: caseNumber, publicationDate, reference, category, product, brand, name, type_numberOfModel, batchNumber, barcode, riskType (comma-separated), danger, measures, description, notifyingCountry, countryOfOrigin, type, level, pictures. Missing fields have `xsi:nil="true"`. The internal JSON search API is undocumented: not used. Photos and brand names are third-party (not covered by the EU licence): links only, never in git | #4 |
+| Safety Gate attribution (exact text, also in both READMEs) | Contains product safety alert data from Safety Gate, the EU rapid alert system for dangerous non-food products (European Commission, https://ec.europa.eu/safety-gate-alerts/), © European Union, 1995-2026. The weekly report data is published under CC0 1.0 (data.europa.eu dataset rapex-rapid-alert-system-non-food); this project parsed, cleaned and translated it. Product photos and brand names belong to their rightholders. SearchAsHouses is not affiliated with or endorsed by the European Commission. | #4 |
 | Repo visibility | public since 2026-11-20: no secrets in git, issues or logs | none |
 | Quiz, source zip, hand-in, stop Azure spending, module mapping, demo video | no issues; done only when I ask | none |
 
@@ -67,3 +66,4 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-25 | #96 | #10 | datastores.py: containers + datastores alerts, images, index (created in Azure) |
 | 2026-11-25 | #97 | #5 | Budget searchashouses-90 (EUR 82 = $90) with alerts at 50/75/90% to the Owner role |
 | 2026-11-25 | #98 | #12 | Environment train-cpu:1 (Azure-built, workspace ACR) + hello-world job: Completed, all 6 packages import, MLflow metric logged |
+| 2026-11-26 | #100 | #4 | Safety Gate source (official weekly report XML, CC0), fields, attribution text in both READMEs; XML samples in data/samples/ |
