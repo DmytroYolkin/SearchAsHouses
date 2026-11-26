@@ -1,0 +1,24 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+# Skeleton from #18; the cleaning logic comes in #19.
+type: command
+name: validate_alerts
+display_name: Validate alerts
+version: "1"
+description: Cleans the raw Safety Gate alerts into one tidy table (MLTable) for the rest of the pipeline.
+
+inputs:
+  alerts:
+    type: uri_folder
+    description: Data asset safetygate_alerts (a folder with alerts.jsonl, made by ingest/safetygate.py)
+
+outputs:
+  validated:
+    type: mltable
+    description: Cleaned alerts (alerts.jsonl) plus an MLTable file that describes them
+
+code: ./src
+environment: azureml:train-cpu:1
+command: >-
+  python validate_alerts.py
+  --alerts ${{inputs.alerts}}
+  --validated ${{outputs.validated}}
