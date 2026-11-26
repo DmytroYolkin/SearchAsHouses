@@ -22,6 +22,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | Datastores | `alerts`, `images`, `index`: containers in the workspace storage account; account-key access (key read at run time, kept in the workspace key vault, never on disk) | #10 |
 | Budget alert | budget `searchashouses-90`: EUR 82 (= $90 at the ECB rate of 2026-11-25; billing currency is EUR), yearly from 2026-11-01, e-mail alerts at 50/75/90% of actual cost to the Owner role. Subscription spending limit is On | #5 |
 | Training environment | `train-cpu`: Azure ML builds it from base image openmpi4.1.0-ubuntu22.04:20261122.v1 + conda file (Python 3.11, torch 2.15.0+cpu, transformers 5.24.1, sentence-transformers 6.3.0, faiss-cpu 1.16.0, mlflow 3.18.0, azureml-mlflow 1.62.0.post7). Image lives in the workspace ACR (~$5/month); the GHCR alternative was declined | #12 |
+| CI | `.github/workflows/ci.yml`: jobs `ruff` and `pytest` (Python 3.11, setup packages installed) on PRs to main and pushes to main; `pull_request` trigger only, read-only token. Branch protection on main requires both checks | #31 |
 | GitHub-to-Azure login | open | #1 |
 | Local Kubernetes and runner | open | #2 |
 | LLM for the review note | open | #3 |
@@ -66,4 +67,5 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-25 | #96 | #10 | datastores.py: containers + datastores alerts, images, index (created in Azure) |
 | 2026-11-25 | #97 | #5 | Budget searchashouses-90 (EUR 82 = $90) with alerts at 50/75/90% to the Owner role |
 | 2026-11-25 | #98 | #12 | Environment train-cpu:1 (Azure-built, workspace ACR) + hello-world job: Completed, all 6 packages import, MLflow metric logged |
+| 2026-11-25 | #99 | #31 | ci.yml (ruff + pytest on every PR and push to main); branch protection on main requires both checks |
 | 2026-11-26 | #100 | #4 | Safety Gate source (official weekly report XML, CC0), fields, attribution text in both READMEs; XML samples in data/samples/ |
