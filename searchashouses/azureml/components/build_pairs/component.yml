@@ -1,0 +1,37 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+# Skeleton from #18; the pair logic comes in #20 (and the translations in #37).
+type: command
+name: build_pairs
+display_name: Build pairs
+version: "1"
+description: Builds (listing, alert) match pairs and hard non-matches, split train/test by alert and time.
+
+inputs:
+  alerts:
+    type: mltable
+    description: Cleaned alerts from validate_alerts
+  listings:
+    type: uri_folder
+    description: Data asset abo_listings (ABO product listings, #15 and #16)
+  test_days:
+    type: integer
+    default: 30
+    description: Alerts published in the last test_days days go to the test split
+
+outputs:
+  train:
+    type: uri_folder
+    description: Training pairs (pairs.jsonl)
+  test:
+    type: uri_folder
+    description: Test pairs (pairs.jsonl); no alert is in both train and test
+
+code: ./src
+environment: azureml:train-cpu:1
+command: >-
+  python build_pairs.py
+  --alerts ${{inputs.alerts}}
+  --listings ${{inputs.listings}}
+  --test-days ${{inputs.test_days}}
+  --train ${{outputs.train}}
+  --test ${{outputs.test}}
