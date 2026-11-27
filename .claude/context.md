@@ -3,13 +3,15 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103)
-- In progress: #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103); #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105)
+- In progress: #16 ABO data assets (PR #106)
+- M1 still open after #106: only the spikes #1, #2, #3 (both data assets are registered)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
-  - #33 [ci-cd] Fail CI when a component has no unit test
+  - #19 [azureml] Build the validate_alerts component
+  - #33 [ci-cd] Fail CI when a component has no unit test (better after #20, see #104)
   - #34 [ingest] Write 25 Dutch hand-written test listings
   - #40 [guardrails] Add input cleaning and PII removal (G1)
 
@@ -20,7 +22,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | CPU quota and VM size | Sweden Central; `cpu-cluster` = Standard_D4s_v3 (4 vCPU, 16 GB, $0.204/h), 0-1 nodes, scale-down 120 s. Quota: 20 cores in total, 6 per family | #9 |
 | Azure region | Sweden Central. Allowed by Azure for Students: germanywestcentral, swedencentral, uksouth, italynorth, norwayeast (West/North Europe and France Central are blocked) | #9 |
 | Azure resources | rg-searchashouses, mlw-searchashouses (+ storage, key vault, Log Analytics, App Insights); workspace ACR created by the first environment build (#12, ~$5/month) | #9, #12 |
-| Datastores | `alerts`, `images`, `index`: containers in the workspace storage account; account-key access (key read at run time, kept in the workspace key vault, never on disk) | #10 |
+| Datastores | `alerts`, `listings` (added in #16), `images`, `index`: containers in the workspace storage account; account-key access (key read at run time, kept in the workspace key vault, never on disk); uploads use the short-lived SAS token the datastore returns | #10, #16 |
 | Budget alert | budget `searchashouses-90`: EUR 82 (= $90 at the ECB rate of 2026-11-25; billing currency is EUR), yearly from 2026-11-01, e-mail alerts at 50/75/90% of actual cost to the Owner role. Subscription spending limit is On | #5 |
 | Training environment | `train-cpu`: Azure ML builds it from base image openmpi4.1.0-ubuntu22.04:20261122.v1 + conda file (Python 3.11, torch 2.15.0+cpu, transformers 5.24.1, sentence-transformers 6.3.0, faiss-cpu 1.16.0, mlflow 3.18.0, azureml-mlflow 1.62.0.post7). Image lives in the workspace ACR (~$5/month); the GHCR alternative was declined | #12 |
 | CI | `.github/workflows/ci.yml`: jobs `ruff` and `pytest` (Python 3.11, setup packages installed) on PRs to main and pushes to main; `pull_request` trigger only, read-only token. Branch protection on main requires both checks | #31 |
@@ -40,7 +42,8 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 |---|---|
 | train-cpu environment | 1 |
 | safetygate_alerts data asset | 1 (pull 2026-11-26: 12,135 alerts, 149 weekly reports, alerts 2023-12-20 to 2026-11-26; datastore `alerts`, path safetygate/2026-11-26/) |
-| abo_listings data asset | none |
+| abo_listings data asset | 1 (pull 2026-11-27: 147,702 listings of 145,615 products; datastore `listings`, path abo/2026-11-27/) |
+| abo_photos data asset | 1 (5,000 products, 4,890 small image files + photo_subset.csv; datastore `images`, path abo/2026-11-27/) |
 | handwritten_test data asset | none |
 | officer_feedback data asset | none |
 | searchashouses-bundle | none |
@@ -78,3 +81,4 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-26 | #103 | #17 | notebooks/01_explore_alerts.ipynb (executed, with outputs) + notebooks/requirements.txt; cleaning list and open filtering decision for #19 |
 | 2026-11-26 | #104 | #18 | Hand-written skeletons: validate_alerts (runs, passes data through, writes MLTable) and build_pairs (interface, steps raise NotImplementedError); component spec test for every component.yml |
 | 2026-11-27 | #105 | #15 | ingest/abo.py + 6 unit tests + data/samples/abo_sample.json; ABO credit in both READMEs; run: 147,702 listings, 5,000-photo subset (local data/raw/abo/2026-11-27/) |
+| 2026-11-27 | #106 | #16 | listings datastore; abo.py --download-photos; register.py generalized (safetygate, abo_listings, abo_photos); abo_listings v1 and abo_photos v1 registered |

@@ -7,7 +7,7 @@ Python scripts (SDK v2) that create the Azure resources the project needs. Each 
 | `azure_config.py` | reads `.env` and builds an `MLClient` (shared by the other scripts) | #9 |
 | `workspace.py` | resource group `rg-searchashouses` + workspace `mlw-searchashouses` | #9 |
 | `compute.py` | CPU cluster `cpu-cluster`: Standard_D4s_v3, 0-1 nodes, scale-down after 120 s. `--instance NAME` creates a compute instance that shuts down after 30 idle minutes (only if ever needed) | #9, #11 |
-| `datastores.py` | containers + datastores `alerts`, `images`, `index` in the workspace storage account (account-key access; the key goes straight to the workspace key vault) | #10 |
+| `datastores.py` | containers + datastores `alerts`, `listings` (#16), `images`, `index` in the workspace storage account (account-key access; the key goes straight to the workspace key vault) | #10, #16 |
 | `check_idle.py` | lists running compute instances, cluster nodes, online endpoints and registries; exit 0 + "nothing billable running" when clear | #11 |
 
 Before the first run (commands run from `searchashouses/`):

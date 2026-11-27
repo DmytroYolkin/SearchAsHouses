@@ -16,20 +16,27 @@ Run: `python ingest/safetygate.py --since 2024-01-01`
 A second run on the same day reuses the reports already downloaded. Test: `pytest tests/ingest/test_safetygate.py`.
 
 ## register.py
-Uploads one pull folder to the `alerts` datastore (`safetygate/<pull date>/`) and registers it as the next version of the data asset `safetygate_alerts` (type `uri_folder`), tagged with pull date, alert count, weekly reports, first/last alert date, source and licence. A pull that is already registered is skipped.
+Uploads one local pull to its datastore and registers it as the next version of a data asset (type `uri_folder`), tagged with the pull date, counts, source and licence. A pull that is already registered is skipped. Uploads use the datastore's short-lived SAS token, 4 MB blocks and 8 files at a time.
+
+| Source (argument) | Data asset | Datastore / folder | Files uploaded |
+|---|---|---|---|
+| `safetygate` (default) | `safetygate_alerts` | `alerts` / `safetygate/<pull date>/` | `alerts.jsonl`, `list.xml`, `reports/*.xml` |
+| `abo_listings` | `abo_listings` | `listings` / `abo/<pull date>/` | `listings.jsonl` |
+| `abo_photos` | `abo_photos` | `images` / `abo/<pull date>/` | `photo_subset.csv`, `images/**/*.jpg` |
 
 Needs `az login`, the filled `.env` and `pip install -r azureml/setup/requirements.txt`.
 
-Run: `python ingest/register.py` (newest pull) or `python ingest/register.py --pull-date 2026-11-26`
-Check: `az ml data show -n safetygate_alerts --version 1`. Test: `pytest tests/ingest/test_register.py`.
+Run: `python ingest/register.py [safetygate|abo_listings|abo_photos] [--pull-date YYYY-MM-DD]` (default: the newest pull)
+Check: `az ml data show -n <data asset> --version 1`. Test: `pytest tests/ingest/test_register.py`.
 
 ## abo.py
 Downloads and parses the Amazon Berkeley Objects listings (CC BY 4.0, see the data credits in `../README.md`) and picks a reproducible photo subset. Standard library only; reuses `download()` from `safetygate.py`.
 
-Run: `python ingest/abo.py` (options: `--photos 5000`, `--seed 42`)
+Run: `python ingest/abo.py` (options: `--photos 5000`, `--seed 42`, `--download-photos`)
 
 1. Downloads the 16 listing files (`listings_<0-f>.json.gz`) and `images.csv.gz` from the public ABO bucket (about 95 MB) into `data/raw/abo/<pull date>/raw/`.
 2. Writes `data/raw/abo/<pull date>/listings.jsonl`: one flat record per listing (item_id, language, title, titles per language, brand, model_name, model_number, category, category_path, color, description, main_image_id, country, domain_name). Language: English first, then Dutch, then French, else the first one.
-3. Writes `photo_subset.csv` (item_id, image_id, path): `--photos` random main photos with a fixed `--seed`, small images only. The photos are downloaded in #16.
+3. Writes `photo_subset.csv` (item_id, image_id, path): `--photos` random main photos with a fixed `--seed`, one per product, small images only.
+4. With `--download-photos`: downloads those photos (8 at a time, skipping files already there) into `data/raw/abo/<pull date>/images/`.
 
 Test: `pytest tests/ingest/test_abo.py`.

@@ -1,6 +1,6 @@
 """Download and parse the Amazon Berkeley Objects (ABO) listings, pick a photo subset (issue #15).
 
-Run from searchashouses/:  python ingest/abo.py [--photos 5000] [--seed 42]
+Run from searchashouses/:  python ingest/abo.py [--photos 5000] [--seed 42] [--download-photos]
 
 Source: the ABO dataset (CC BY 4.0, credit in ../README.md), served unpacked from its public
 bucket: 16 listing files (listings/metadata/listings_<0-f>.json.gz, one JSON product per line)
@@ -13,7 +13,7 @@ Output (git-ignored), one folder per pull date:
                                            be listed in several marketplaces (other language),
                                            so a listing is identified by item_id + domain_name
   data/raw/abo/<pull date>/photo_subset.csv  item_id, image_id, path of the chosen small photos
-The photos themselves are downloaded in #16.
+  data/raw/abo/<pull date>/images/<path>      the chosen photos, only with --download-photos (#16)
 """
 
 import argparse
@@ -22,6 +22,7 @@ import gzip
 import json
 import random
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from pathlib import Path
 
@@ -96,6 +97,24 @@ def choose_photos(
     ]
 
 
+def download_photos(photos: list[dict], folder: Path, workers: int = 8) -> int:
+    """Download the subset photos (small images, max 256 px) into folder/<path>.
+
+    Downloads 8 files at a time and skips files that are already there. Products that share
+    one image are downloaded once. Returns the number of files downloaded in this run.
+    """
+    todo = sorted({p["path"] for p in photos if not (folder / p["path"]).exists()})
+
+    def fetch_photo(path: str) -> None:
+        target = folder / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(download(f"{BASE_URL}/images/small/{path}"))
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        list(pool.map(fetch_photo, todo))  # list() waits for all and re-raises the first error
+    return len(todo)
+
+
 def fetch(relative: str, raw_dir: Path) -> Path:
     """Download one bucket file into raw_dir, unless it is already there (resume)."""
     path = raw_dir / relative.split("/")[-1]
@@ -109,6 +128,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Download and parse the ABO listings.")
     parser.add_argument("--photos", type=int, default=5000, help="size of the photo subset")
     parser.add_argument("--seed", type=int, default=42, help="random seed of the photo subset")
+    parser.add_argument("--download-photos", action="store_true", help="also download the photos")
     args = parser.parse_args()
 
     pull_dir = DATA_DIR / date.today().isoformat()
@@ -133,6 +153,9 @@ def main() -> None:
         writer.writerows(photos)
     print(f"saved {len(listings)} listings and {len(photos)} photos "
           f"(seed {args.seed}) to {pull_dir.relative_to(PROJECT_DIR)}")
+    if args.download_photos:
+        new = download_photos(photos, pull_dir / "images")
+        print(f"downloaded {new} photo files to {(pull_dir / 'images').relative_to(PROJECT_DIR)}")
 
 
 if __name__ == "__main__":
