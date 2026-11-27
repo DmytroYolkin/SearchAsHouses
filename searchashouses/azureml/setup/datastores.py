@@ -19,6 +19,7 @@ from azure_config import get_ml_client, load_settings
 # datastore name (= container name) -> what it holds
 DATASTORES = {
     "alerts": "Safety Gate alerts: raw pulls and the safetygate_alerts data asset",
+    "listings": "Product listings: the abo_listings data asset (#16)",
     "images": "Product photos: ABO photo subset and alert images",
     "index": "FAISS index files built by build_index",
 }

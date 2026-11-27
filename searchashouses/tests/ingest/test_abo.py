@@ -56,6 +56,21 @@ def test_photo_subset_is_reproducible_and_only_uses_known_images():
     assert len(abo.choose_photos(listings, images, size=99, seed=42)) == 4  # capped
 
 
+def test_download_photos_fetches_each_file_once_and_skips_existing(tmp_path, monkeypatch):
+    fetched = []
+    monkeypatch.setattr(abo, "download", lambda url: fetched.append(url) or b"jpg")
+    (tmp_path / "bb").mkdir()
+    (tmp_path / "bb" / "2.jpg").write_bytes(b"already here")
+    photos = [
+        {"item_id": "B1", "image_id": "i1", "path": "aa/1.jpg"},
+        {"item_id": "B2", "image_id": "i1", "path": "aa/1.jpg"},  # two products, one image
+        {"item_id": "B3", "image_id": "i2", "path": "bb/2.jpg"},  # already downloaded
+    ]
+    assert abo.download_photos(photos, tmp_path, workers=2) == 1
+    assert fetched == [f"{abo.BASE_URL}/images/small/aa/1.jpg"]
+    assert (tmp_path / "aa" / "1.jpg").read_bytes() == b"jpg"
+
+
 def test_a_product_in_two_marketplaces_gets_one_photo():
     shoe = LISTINGS["B06X9STHNG"]
     same_shoe_elsewhere = {**shoe, "domain_name": "amazon.ca", "main_image_id": "OTHER"}
