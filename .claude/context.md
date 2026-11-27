@@ -76,4 +76,5 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-26 | #101 | #13 | ingest/safetygate.py + 4 unit tests; pull --since 2024-01-01: 149 weekly reports, 12,135 alerts (local data/raw/safetygate/2026-11-26/) |
 | 2026-11-26 | #102 | #14 | ingest/register.py + 3 unit tests; safetygate_alerts version 1 registered (151 files in datastore alerts, 12,135 alerts) |
 | 2026-11-26 | #103 | #17 | notebooks/01_explore_alerts.ipynb (executed, with outputs) + notebooks/requirements.txt; cleaning list and open filtering decision for #19 |
+| 2026-11-26 | #104 | #18 | Hand-written skeletons: validate_alerts (runs, passes data through, writes MLTable) and build_pairs (interface, steps raise NotImplementedError); component spec test for every component.yml |
 | 2026-11-27 | #105 | #15 | ingest/abo.py + 6 unit tests + data/samples/abo_sample.json; ABO credit in both READMEs; run: 147,702 listings, 5,000-photo subset (local data/raw/abo/2026-11-27/) |
