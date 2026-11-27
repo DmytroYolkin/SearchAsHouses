@@ -9,7 +9,7 @@ Focus: GitHub Actions connected to Azure, with reusable Azure Machine Learning p
 
 Three processes:
 1. Training, in Azure ML only: validate_alerts -> translate_nl_fr (parallel job) -> build_pairs -> embed_images (parallel job) -> train_hazard (sweep) + train_matcher -> build_index (FAISS) -> train_reranker -> evaluate (deploy flag) -> RAI text insights -> register_bundle. Triggered by train.yml or a monthly Azure ML schedule. Only hazard, matcher and re-ranker learn weights; translation, CLIP and the LLM are used as-is. deploy.yml ships a new bundle only if the deploy flag is true.
-2. Inference, on a local Kubernetes cluster (not Azure): gateway (FastAPI: /screen, /feedback, /health, /model-info), models (hazard, matcher, re-ranker; index on a PersistentVolume), llm-guard (LLM review note behind 8 guardrails), postgres (StatefulSet). During testing I play BelBazaar's backend and send requests with curl, Postman or a script.
+2. Inference, on a local Kubernetes cluster (not Azure; k3d cluster `searchashouses`, see `searchashouses/k8s/k3d-cluster.yaml`): gateway (FastAPI: /screen, /feedback, /health, /model-info), models (hazard, matcher, re-ranker; index on a PersistentVolume), llm-guard (LLM review note behind 8 guardrails), postgres (StatefulSet). During testing I play BelBazaar's backend and send requests with curl, Postman or a script.
 3. Weekly index refresh: ingest.yml (GitHub Actions, Fridays) pulls new alerts and registers a new data asset version in Azure; a refresh-index CronJob adds them to the FAISS index with the existing matcher. No retraining; models change only through process 1.
 
 Feedback loop: officer decisions -> /feedback -> postgres -> exported as a new data asset -> next training run.

@@ -3,12 +3,11 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103); #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105)
-- In progress: #16 ABO data assets (PR #106)
-- M1 still open after #106: only the spikes #1, #2, #3 (both data assets are registered)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103); #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105); #16 ABO data assets (PR #106)
+- In progress: #2 local Kubernetes cluster (PR #108)
+- M1 still open: spikes #1 (PR #107), #3 (all data assets are registered)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
-  - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
   - #19 [azureml] Build the validate_alerts component
   - #33 [ci-cd] Fail CI when a component has no unit test (better after #20, see #104)
@@ -30,7 +29,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | Component skeletons (#18) | Written by hand: the module 1.4 agent skill is not available in this project (decided 2026-11-26) | #18 |
 | ABO source | Unpacked files from the public ABO bucket (CC BY 4.0): 16 listing files + images.csv.gz (about 95 MB, no 3 GB archive). 147,702 listings, 145,615 products: the same product can be listed in several marketplaces in another language, so a listing = item_id + domain_name. Language picked per listing: en, then nl, then fr, else the first; all titles kept. Titles in en 122,734, nl 3,555, fr 6,570; 44% phone cases (mostly amazon.in). Photo subset: 5,000 products, seed 42, small images (4,890 distinct files). Credit text in both READMEs | #15 |
 | GitHub-to-Azure login | open | #1 |
-| Local Kubernetes and runner | open | #2 |
+| Local Kubernetes and runner | k3d (k3s in Docker, as in lab 3.1): cluster `searchashouses` from `k8s/k3d-cluster.yaml`, 1 server + 1 agent, k3s v1.31.5, API https://127.0.0.1:6550, ingress http://localhost:8080 -> Traefik, StorageClass local-path; context `k3d-searchashouses`. deploy.yml reaches it through a self-hosted runner on this laptop (labels self-hosted, k8s; same user, so ~/.kube/config; started only while deploying; only push/workflow_dispatch jobs, #57), because the API listens on 127.0.0.1 only | #2 |
 | LLM for the review note | open | #3 |
 | Safety Gate source | Official "Weekly Reports - XML" export (data.europa.eu dataset rapex-rapid-alert-system-non-food, CC0 1.0). List of all weekly reports since 2005: `https://ec.europa.eu/safety-gate-alerts/api/download/weeklyReport/list/xml/en`; each entry has a `URL` to one report's XML (`.../weeklyReport/detail/xml/<id>?language=en...`), about 80-110 alerts per week. No paging: one file per week. Alert fields used: caseNumber, publicationDate, reference, category, product, brand, name, type_numberOfModel, batchNumber, barcode, riskType (comma-separated), danger, measures, description, notifyingCountry, countryOfOrigin, type, level, pictures. Missing fields have `xsi:nil="true"`. The internal JSON search API is undocumented: not used. Photos and brand names are third-party (not covered by the EU licence): links only, never in git | #4 |
 | Safety Gate attribution (exact text, also in both READMEs) | Contains product safety alert data from Safety Gate, the EU rapid alert system for dangerous non-food products (European Commission, https://ec.europa.eu/safety-gate-alerts/), © European Union, 1995-2026. The weekly report data is published under CC0 1.0 (data.europa.eu dataset rapex-rapid-alert-system-non-food); this project parsed, cleaned and translated it. Product photos and brand names belong to their rightholders. SearchAsHouses is not affiliated with or endorsed by the European Commission. | #4 |
@@ -59,6 +58,7 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 ## Open bugs and risks
 - Public repo: secret scanning and push protection are off (Settings > Code security)
 - Self-hosted runner on a public repo: fork PRs must never reach it (see #57)
+- Local cluster needs Docker Desktop running; on this laptop host.docker.internal resolves to an unreachable IP, so k3d-cluster.yaml pins the API to 127.0.0.1
 - Azure CLI 2.77: `az resource list` returns nothing and some error replies fail with "content already consumed"; use `az rest` or the SDK (check_idle.py uses the SDK). `az ml job create --stream` shows AuthenticationFailed while streaming logs although the job runs fine; read logs with `ml_client.jobs.download`
 
 ## Change log
@@ -82,3 +82,4 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-26 | #104 | #18 | Hand-written skeletons: validate_alerts (runs, passes data through, writes MLTable) and build_pairs (interface, steps raise NotImplementedError); component spec test for every component.yml |
 | 2026-11-27 | #105 | #15 | ingest/abo.py + 6 unit tests + data/samples/abo_sample.json; ABO credit in both READMEs; run: 147,702 listings, 5,000-photo subset (local data/raw/abo/2026-11-27/) |
 | 2026-11-27 | #106 | #16 | listings datastore; abo.py --download-photos; register.py generalized (safetygate, abo_listings, abo_photos); abo_listings v1 and abo_photos v1 registered |
+| 2026-11-28 | #108 | #2 | k3d cluster searchashouses from k8s/k3d-cluster.yaml (2 nodes Ready, ingress on localhost:8080); runner plan for deploy.yml |
