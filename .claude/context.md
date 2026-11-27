@@ -4,13 +4,11 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 ## Status
 - Current milestone: M1 Setup & data
 - Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103)
-- In progress: #18 validate_alerts and build_pairs skeletons (PR #104)
-- M1 still open: spikes #1, #2, #3 and ABO ingest #15, #16
+- In progress: #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105)
 - Next up (status:ready):
   - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
-  - #15 [ingest] Write ingest/abo.py and register ABO listings and a photo subset (1/2)
   - #33 [ci-cd] Fail CI when a component has no unit test
   - #34 [ingest] Write 25 Dutch hand-written test listings
   - #40 [guardrails] Add input cleaning and PII removal (G1)
@@ -28,6 +26,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | CI | `.github/workflows/ci.yml`: jobs `ruff` and `pytest` (Python 3.11, setup packages installed) on PRs to main and pushes to main; `pull_request` trigger only, read-only token. Branch protection on main requires both checks | #31 |
 | Alert filtering in validate_alerts | Keep all alerts (decided 2026-11-26): Motor vehicles (1,154 recalls, no barcodes) and "Other types of alerts" (150) stay in. Cleaning list from the notebook: "Unknown" -> empty; split glued EAN codes; risk types and categories compared case- and space-insensitively, keeping the most common spelling (general rule, not a fixed list: chemical -> Chemical, "Other - disposable electronic cigarette" -> "Other - Disposable electronic cigarette"); split glued labels ("Explosion and poisoning from inhalation" -> Explosion + Poisoning from inhalation); "Health risk" -> "Health risk / other"; group one-off "Other - ..." categories; group risk types with < 50 alerts for the classifier | #17, #19 |
 | Component skeletons (#18) | Written by hand: the module 1.4 agent skill is not available in this project (decided 2026-11-26) | #18 |
+| ABO source | Unpacked files from the public ABO bucket (CC BY 4.0): 16 listing files + images.csv.gz (about 95 MB, no 3 GB archive). 147,702 listings, 145,615 products: the same product can be listed in several marketplaces in another language, so a listing = item_id + domain_name. Language picked per listing: en, then nl, then fr, else the first; all titles kept. Titles in en 122,734, nl 3,555, fr 6,570; 44% phone cases (mostly amazon.in). Photo subset: 5,000 products, seed 42, small images (4,890 distinct files). Credit text in both READMEs | #15 |
 | GitHub-to-Azure login | open | #1 |
 | Local Kubernetes and runner | open | #2 |
 | LLM for the review note | open | #3 |
@@ -78,3 +77,4 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-26 | #102 | #14 | ingest/register.py + 3 unit tests; safetygate_alerts version 1 registered (151 files in datastore alerts, 12,135 alerts) |
 | 2026-11-26 | #103 | #17 | notebooks/01_explore_alerts.ipynb (executed, with outputs) + notebooks/requirements.txt; cleaning list and open filtering decision for #19 |
 | 2026-11-26 | #104 | #18 | Hand-written skeletons: validate_alerts (runs, passes data through, writes MLTable) and build_pairs (interface, steps raise NotImplementedError); component spec test for every component.yml |
+| 2026-11-27 | #105 | #15 | ingest/abo.py + 6 unit tests + data/samples/abo_sample.json; ABO credit in both READMEs; run: 147,702 listings, 5,000-photo subset (local data/raw/abo/2026-11-27/) |
