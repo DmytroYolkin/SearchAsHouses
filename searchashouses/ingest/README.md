@@ -22,3 +22,14 @@ Needs `az login`, the filled `.env` and `pip install -r azureml/setup/requiremen
 
 Run: `python ingest/register.py` (newest pull) or `python ingest/register.py --pull-date 2026-11-26`
 Check: `az ml data show -n safetygate_alerts --version 1`. Test: `pytest tests/ingest/test_register.py`.
+
+## abo.py
+Downloads and parses the Amazon Berkeley Objects listings (CC BY 4.0, see the data credits in `../README.md`) and picks a reproducible photo subset. Standard library only; reuses `download()` from `safetygate.py`.
+
+Run: `python ingest/abo.py` (options: `--photos 5000`, `--seed 42`)
+
+1. Downloads the 16 listing files (`listings_<0-f>.json.gz`) and `images.csv.gz` from the public ABO bucket (about 95 MB) into `data/raw/abo/<pull date>/raw/`.
+2. Writes `data/raw/abo/<pull date>/listings.jsonl`: one flat record per listing (item_id, language, title, titles per language, brand, model_name, model_number, category, category_path, color, description, main_image_id, country, domain_name). Language: English first, then Dutch, then French, else the first one.
+3. Writes `photo_subset.csv` (item_id, image_id, path): `--photos` random main photos with a fixed `--seed`, small images only. The photos are downloaded in #16.
+
+Test: `pytest tests/ingest/test_abo.py`.
