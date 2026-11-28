@@ -1,0 +1,32 @@
+# Check that GitHub Actions can log in to Azure with OIDC (issue #1).
+# No password or client secret is stored anywhere: GitHub gives the job a short-lived token
+# for the environment "azure-ml", and Azure trusts exactly that subject (federated credential
+# on the app registration "github-searchashouses", role AzureML Data Scientist on the workspace).
+# The repo is public, so the steps print no subscription or tenant IDs.
+name: Azure login check
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/azure-login-check.yml"]
+
+permissions:
+  contents: read
+  id-token: write # lets the job ask GitHub for the OIDC token
+
+jobs:
+  az-account-show:
+    runs-on: ubuntu-latest
+    environment: azure-ml # only main may use this environment
+    steps:
+      - uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: az account show (name and state only)
+        run: az account show --query "{subscription:name, state:state, loginType:user.type}" -o table
+      - name: The Azure ML workspace is reachable with the workspace role
+        run: |
+          az extension add --name ml --yes --only-show-errors
+          az ml workspace show -n mlw-searchashouses -g rg-searchashouses --query "{name:name, location:location}" -o table
