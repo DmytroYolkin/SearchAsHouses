@@ -3,11 +3,10 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 
 ## Status
 - Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103); #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105)
-- In progress: #16 ABO data assets (PR #106)
-- M1 still open after #106: only the spikes #1, #2, #3 (both data assets are registered)
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103); #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105); #16 ABO data assets (PR #106)
+- In progress: #1 GitHub-to-Azure login (PR #107)
+- M1 still open: spikes #2, #3 (all data assets are registered)
 - Next up (status:ready):
-  - #1 [ci-cd] Decide how GitHub Actions logs in to Azure
   - #2 [k8s] Choose the local Kubernetes cluster and how deploy.yml reaches it
   - #3 [guardrails] Choose the LLM for the review note
   - #19 [azureml] Build the validate_alerts component
@@ -29,7 +28,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | Alert filtering in validate_alerts | Keep all alerts (decided 2026-11-26): Motor vehicles (1,154 recalls, no barcodes) and "Other types of alerts" (150) stay in. Cleaning list from the notebook: "Unknown" -> empty; split glued EAN codes; risk types and categories compared case- and space-insensitively, keeping the most common spelling (general rule, not a fixed list: chemical -> Chemical, "Other - disposable electronic cigarette" -> "Other - Disposable electronic cigarette"); split glued labels ("Explosion and poisoning from inhalation" -> Explosion + Poisoning from inhalation); "Health risk" -> "Health risk / other"; group one-off "Other - ..." categories; group risk types with < 50 alerts for the classifier | #17, #19 |
 | Component skeletons (#18) | Written by hand: the module 1.4 agent skill is not available in this project (decided 2026-11-26) | #18 |
 | ABO source | Unpacked files from the public ABO bucket (CC BY 4.0): 16 listing files + images.csv.gz (about 95 MB, no 3 GB archive). 147,702 listings, 145,615 products: the same product can be listed in several marketplaces in another language, so a listing = item_id + domain_name. Language picked per listing: en, then nl, then fr, else the first; all titles kept. Titles in en 122,734, nl 3,555, fr 6,570; 44% phone cases (mostly amazon.in). Photo subset: 5,000 products, seed 42, small images (4,890 distinct files). Credit text in both READMEs | #15 |
-| GitHub-to-Azure login | open | #1 |
+| GitHub-to-Azure login | OIDC, no stored secret (same method as the course lab): app registration `github-searchashouses` with a federated credential for `repo:DmytroYolkin@104588396/SearchAsHouses@1465532844:environment:azure-ml` (the repo uses GitHub's immutable subject format with numeric IDs). Role: AzureML Data Scientist on the workspace only. GitHub environment `azure-ml` may only be used from main; environment secrets AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID (masked in logs). Workflows need `permissions: id-token: write`, `environment: azure-ml` and `azure/login@v3`. Check: `.github/workflows/azure-login-check.yml` (green) | #1 |
 | Local Kubernetes and runner | open | #2 |
 | LLM for the review note | open | #3 |
 | Safety Gate source | Official "Weekly Reports - XML" export (data.europa.eu dataset rapex-rapid-alert-system-non-food, CC0 1.0). List of all weekly reports since 2005: `https://ec.europa.eu/safety-gate-alerts/api/download/weeklyReport/list/xml/en`; each entry has a `URL` to one report's XML (`.../weeklyReport/detail/xml/<id>?language=en...`), about 80-110 alerts per week. No paging: one file per week. Alert fields used: caseNumber, publicationDate, reference, category, product, brand, name, type_numberOfModel, batchNumber, barcode, riskType (comma-separated), danger, measures, description, notifyingCountry, countryOfOrigin, type, level, pictures. Missing fields have `xsi:nil="true"`. The internal JSON search API is undocumented: not used. Photos and brand names are third-party (not covered by the EU licence): links only, never in git | #4 |
@@ -59,6 +58,7 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 ## Open bugs and risks
 - Public repo: secret scanning and push protection are off (Settings > Code security)
 - Self-hosted runner on a public repo: fork PRs must never reach it (see #57)
+- Git Bash rewrites arguments that start with `/` (e.g. `--scope /subscriptions/...`) into Windows paths, giving `MissingSubscription`: prefix such az commands with `MSYS_NO_PATHCONV=1`
 - Azure CLI 2.77: `az resource list` returns nothing and some error replies fail with "content already consumed"; use `az rest` or the SDK (check_idle.py uses the SDK). `az ml job create --stream` shows AuthenticationFailed while streaming logs although the job runs fine; read logs with `ml_client.jobs.download`
 
 ## Change log
@@ -82,3 +82,4 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-26 | #104 | #18 | Hand-written skeletons: validate_alerts (runs, passes data through, writes MLTable) and build_pairs (interface, steps raise NotImplementedError); component spec test for every component.yml |
 | 2026-11-27 | #105 | #15 | ingest/abo.py + 6 unit tests + data/samples/abo_sample.json; ABO credit in both READMEs; run: 147,702 listings, 5,000-photo subset (local data/raw/abo/2026-11-27/) |
 | 2026-11-27 | #106 | #16 | listings datastore; abo.py --download-photos; register.py generalized (safetygate, abo_listings, abo_photos); abo_listings v1 and abo_photos v1 registered |
+| 2026-11-28 | #107 | #1 | OIDC login from GitHub Actions: app github-searchashouses (federated credential, no secret), AzureML Data Scientist on the workspace, environment azure-ml (main only); azure-login-check.yml green |
