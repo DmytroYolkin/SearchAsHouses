@@ -1,10 +1,13 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-# Skeleton from #18; the pair logic comes in #20 (and the translations in #37).
+# Issue #20 (skeleton from #18); translated views are added in #37.
 type: command
 name: build_pairs
 display_name: Build pairs
 version: "1"
-description: Builds (listing, alert) match pairs and hard non-matches, split train/test by alert and time.
+description: >-
+  Builds (listing, alert) training triplets with similar ABO listings of other brands as hard
+  negatives, a test set of alert queries plus normal ABO listings, and the alert texts. Train and
+  test are split by alert and time; the same product is never in both.
 
 inputs:
   alerts:
@@ -12,19 +15,33 @@ inputs:
     description: Cleaned alerts from validate_alerts
   listings:
     type: uri_folder
-    description: Data asset abo_listings (ABO product listings, #15 and #16)
+    description: Data asset abo_listings (listings.jsonl, #15 and #16)
   test_days:
     type: integer
     default: 30
-    description: Alerts published in the last test_days days go to the test split
+    description: Alerts of the last test_days days (from the newest alert) go to test
+  max_listings:
+    type: integer
+    default: 30000
+    description: Number of ABO listings searched for hard negatives
+  normal_listings:
+    type: integer
+    default: 2000
+    description: Number of normal ABO listings in the test set (for false flags per 1,000)
+  seed:
+    type: integer
+    default: 42
 
 outputs:
   train:
     type: uri_folder
-    description: Training pairs (pairs.jsonl)
+    description: pairs.jsonl with anchor, positive, negative, alert_id, view
   test:
     type: uri_folder
-    description: Test pairs (pairs.jsonl); no alert is in both train and test
+    description: pairs.jsonl with query, alert_id (null for normal listings), label, view
+  documents:
+    type: uri_folder
+    description: alerts.jsonl with the alert text for every alert (for build_index and evaluate)
 
 code: ./src
 environment: azureml:train-cpu:1
@@ -33,5 +50,9 @@ command: >-
   --alerts ${{inputs.alerts}}
   --listings ${{inputs.listings}}
   --test-days ${{inputs.test_days}}
+  --max-listings ${{inputs.max_listings}}
+  --normal-listings ${{inputs.normal_listings}}
+  --seed ${{inputs.seed}}
   --train ${{outputs.train}}
   --test ${{outputs.test}}
+  --documents ${{outputs.documents}}
