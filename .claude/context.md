@@ -2,12 +2,11 @@
 Updated in every PR that closes an issue (see .claude/rules/context-update.md). Facts and links only.
 
 ## Status
-- Current milestone: M1 Setup & data
-- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103); #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105); #16 ABO data assets (PR #106); #1 GitHub-to-Azure login (PR #107); #2 local Kubernetes cluster (PR #108)
-- In progress: #3 LLM for the review note (PR #109)
-- M1: the last spike #3 is in PR #109; all data assets are registered
+- Current milestone: M2 Training pipeline & CI
+- Done: issue plan (90 issues), labels and milestones; #6 repository skeleton (PR #91); #7 CLAUDE.md, .claude/ and templates (PR #92); #8 report skeleton (PR #93); #9 workspace and cpu-cluster (PR #94); #11 check_idle.py + auto-shutdown (PR #95); #10 datastores (PR #96); #5 budget alert (PR #97); #12 training environment (PR #98); #31 ci.yml (PR #99); #4 Safety Gate source and attribution (PR #100); #13 safetygate.py (PR #101); #14 safetygate_alerts data asset (PR #102); #17 explore alerts notebook (PR #103); #18 component skeletons (PR #104); #15 ABO ingest part 1 (PR #105); #16 ABO data assets (PR #106); #1 GitHub-to-Azure login (PR #107); #2 local Kubernetes cluster (PR #108); #3 LLM for the review note (PR #109)
+- In progress: #19 validate_alerts (PR #110)
+- M1 Setup & data: done (all issues closed 2026-11-28)
 - Next up (status:ready):
-  - #19 [azureml] Build the validate_alerts component
   - #33 [ci-cd] Fail CI when a component has no unit test (better after #20, see #104)
   - #34 [ingest] Write 25 Dutch hand-written test listings
   - #40 [guardrails] Add input cleaning and PII removal (G1)
@@ -23,7 +22,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | Budget alert | budget `searchashouses-90`: EUR 82 (= $90 at the ECB rate of 2026-11-25; billing currency is EUR), yearly from 2026-11-01, e-mail alerts at 50/75/90% of actual cost to the Owner role. Subscription spending limit is On | #5 |
 | Training environment | `train-cpu`: Azure ML builds it from base image openmpi4.1.0-ubuntu22.04:20261122.v1 + conda file (Python 3.11, torch 2.15.0+cpu, transformers 5.24.1, sentence-transformers 6.3.0, faiss-cpu 1.16.0, mlflow 3.18.0, azureml-mlflow 1.62.0.post7). Image lives in the workspace ACR (~$5/month); the GHCR alternative was declined | #12 |
 | CI | `.github/workflows/ci.yml`: jobs `ruff` and `pytest` (Python 3.11, setup packages installed) on PRs to main and pushes to main; `pull_request` trigger only, read-only token. Branch protection on main requires both checks | #31 |
-| Alert filtering in validate_alerts | Keep all alerts (decided 2026-11-26): Motor vehicles (1,154 recalls, no barcodes) and "Other types of alerts" (150) stay in. Cleaning list from the notebook: "Unknown" -> empty; split glued EAN codes; risk types and categories compared case- and space-insensitively, keeping the most common spelling (general rule, not a fixed list: chemical -> Chemical, "Other - disposable electronic cigarette" -> "Other - Disposable electronic cigarette"); split glued labels ("Explosion and poisoning from inhalation" -> Explosion + Poisoning from inhalation); "Health risk" -> "Health risk / other"; group one-off "Other - ..." categories; group risk types with < 50 alerts for the classifier | #17, #19 |
+| Alert filtering in validate_alerts | Implemented in #19 (validate_alerts:1): 27 -> 23 risk types, 83 -> 31 categories, 1,238 placeholders removed, glued barcodes split in 348 alerts. Keep all alerts (decided 2026-11-26): Motor vehicles (1,154 recalls, no barcodes) and "Other types of alerts" (150) stay in. Cleaning list from the notebook: "Unknown" -> empty; split glued EAN codes; risk types and categories compared case- and space-insensitively, keeping the most common spelling (general rule, not a fixed list: chemical -> Chemical, "Other - disposable electronic cigarette" -> "Other - Disposable electronic cigarette"); split glued labels ("Explosion and poisoning from inhalation" -> Explosion + Poisoning from inhalation); "Health risk" -> "Health risk / other"; group one-off "Other - ..." categories; group risk types with < 50 alerts for the classifier | #17, #19 |
 | Component skeletons (#18) | Written by hand: the module 1.4 agent skill is not available in this project (decided 2026-11-26) | #18 |
 | ABO source | Unpacked files from the public ABO bucket (CC BY 4.0): 16 listing files + images.csv.gz (about 95 MB, no 3 GB archive). 147,702 listings, 145,615 products: the same product can be listed in several marketplaces in another language, so a listing = item_id + domain_name. Language picked per listing: en, then nl, then fr, else the first; all titles kept. Titles in en 122,734, nl 3,555, fr 6,570; 44% phone cases (mostly amazon.in). Photo subset: 5,000 products, seed 42, small images (4,890 distinct files). Credit text in both READMEs | #15 |
 | GitHub-to-Azure login | OIDC, no stored secret (same method as the course lab): app registration `github-searchashouses` with a federated credential for `repo:DmytroYolkin@104588396/SearchAsHouses@1465532844:environment:azure-ml` (the repo uses GitHub's immutable subject format with numeric IDs). Role: AzureML Data Scientist on the workspace only. GitHub environment `azure-ml` may only be used from main; environment secrets AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID (masked in logs). Workflows need `permissions: id-token: write`, `environment: azure-ml` and `azure/login@v3`. Check: `.github/workflows/azure-login-check.yml` (green) | #1 |
@@ -38,6 +37,7 @@ Updated in every PR that closes an issue (see .claude/rules/context-update.md). 
 | Item | Version |
 |---|---|
 | train-cpu environment | 1 |
+| validate_alerts component | 1 |
 | safetygate_alerts data asset | 1 (pull 2026-11-26: 12,135 alerts, 149 weekly reports, alerts 2023-12-20 to 2026-11-26; datastore `alerts`, path safetygate/2026-11-26/) |
 | abo_listings data asset | 1 (pull 2026-11-27: 147,702 listings of 145,615 products; datastore `listings`, path abo/2026-11-27/) |
 | abo_photos data asset | 1 (5,000 products, 4,890 small image files + photo_subset.csv; datastore `images`, path abo/2026-11-27/) |
@@ -84,3 +84,4 @@ $90 left: budget shows EUR 0.00 spent (checked 2026-11-25; Azure cost data can l
 | 2026-11-28 | #107 | #1 | OIDC login from GitHub Actions: app github-searchashouses (federated credential, no secret), AzureML Data Scientist on the workspace, environment azure-ml (main only); azure-login-check.yml green |
 | 2026-11-28 | #108 | #2 | k3d cluster searchashouses from k8s/k3d-cluster.yaml (2 nodes Ready, ingress on localhost:8080); runner plan for deploy.yml |
 | 2026-11-28 | #109 | #3 | LLM spike: gpt-4.1-mini (Azure OpenAI) chosen over local granite4:3b / qwen3.5:4b; services/llm_guard/llm_spike.py; test resource deleted |
+| 2026-11-28 | #110 | #19 | validate_alerts: placeholders, barcode lists, spelling rule for risk types and categories, glued labels, Other grouping; 7 unit tests; component validate_alerts:1 registered |
