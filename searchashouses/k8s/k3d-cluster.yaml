@@ -1,0 +1,29 @@
+# Local Kubernetes cluster for SearchAsHouses (issue #2): k3s in Docker, made with k3d.
+# Needs Docker Desktop running. Commands run from searchashouses/:
+#   create:      k3d cluster create --config k8s/k3d-cluster.yaml
+#   check:       kubectl --context k3d-searchashouses get nodes
+#   stop/start:  k3d cluster stop searchashouses / k3d cluster start searchashouses
+#   delete:      k3d cluster delete searchashouses
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: searchashouses
+servers: 1 # control plane (also runs pods)
+agents: 1 # one worker node, so pods can be spread over two nodes
+image: rancher/k3s:v1.31.5-k3s1 # pinned k3s version: the same cluster every time
+kubeAPI:
+  # kubectl talks to the cluster on 127.0.0.1:6550. Without host/hostIP, k3d writes
+  # host.docker.internal into the kubeconfig, which points to an unreachable IP on this laptop.
+  host: "127.0.0.1"
+  hostIP: "127.0.0.1" # listen on this laptop only, not on the network
+  hostPort: "6550"
+ports:
+  - port: 127.0.0.1:8080:80 # http://localhost:8080 -> built-in Traefik ingress -> gateway (#49)
+    nodeFilters:
+      - loadbalancer
+options:
+  k3d:
+    wait: true # return only when the nodes are ready
+  kubeconfig:
+    updateDefaultKubeconfig: true # adds the context k3d-searchashouses to ~/.kube/config
+    switchCurrentContext: true
